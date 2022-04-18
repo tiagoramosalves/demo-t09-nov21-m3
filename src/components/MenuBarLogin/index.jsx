@@ -18,6 +18,11 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import api from "../../services/api";
+import { toast } from "react-toastify";
 
 const MenuBarLogin = () => {
   const history = useHistory();
@@ -30,6 +35,32 @@ const MenuBarLogin = () => {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const handleLogin = async (data) => {
+    const response = await api.post("/sessions/", data).catch((err) => {
+      console.log(err);
+      toast.error("Erro na autenticação");
+    });
+
+    const { access } = response.data;
+    console.log(access);
+
+    localStorage.setItem("@GestaoDeHabitos:token", access);
+    toast.success("Login com Sucesso!");
+
+    history.push("/home/Kenzie");
+  };
+
+  const schema = yup.object().shape({
+    username: yup.string().required("Campo Obrigatório"),
+    password: yup.string().required("Campo Obrigatório"),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: yupResolver(schema) });
 
   return (
     <>
@@ -103,36 +134,39 @@ const MenuBarLogin = () => {
               <Login />
             </Button>
             <Dialog open={open} onClose={handleClose}>
-              <DialogContent>
-                <DialogContentText>Login</DialogContentText>
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  id="name"
-                  label="Email"
-                  type="email"
-                  fullWidth
-                  variant="standard"
-                />
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  id="name"
-                  label="password"
-                  type="password"
-                  fullWidth
-                  variant="standard"
-                />
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleClose}>Cancel</Button>
-                <Button
-                  variant="text"
-                  onClick={() => history.push("/home/Kenzie")}
-                >
-                  Login
-                </Button>
-              </DialogActions>
+              <Box onSubmit={handleSubmit(handleLogin)} component="form">
+                <DialogContent>
+                  <DialogContentText>Login</DialogContentText>
+                  <TextField
+                    {...register("username")}
+                    autoFocus
+                    margin="dense"
+                    label="Nome"
+                    type="name"
+                    fullWidth
+                    variant="standard"
+                    helperText={errors.username?.message}
+                    error={errors.username?.message}
+                  />
+                  <TextField
+                    {...register("password")}
+                    autoFocus
+                    margin="dense"
+                    label="password"
+                    type="password"
+                    fullWidth
+                    variant="standard"
+                    helperText={errors.password?.message}
+                    error={errors.password?.message}
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleClose}>Cancel</Button>
+                  <Button variant="text" type="submit">
+                    Login
+                  </Button>
+                </DialogActions>
+              </Box>
             </Dialog>
           </Toolbar>
         </Container>

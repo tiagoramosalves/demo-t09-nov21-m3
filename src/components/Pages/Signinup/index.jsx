@@ -66,7 +66,7 @@ const Siginup = () => {
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: "1", bgcolor:"secondary.main" }}>
+          <Avatar sx={{ m: "1", bgcolor: "secondary.main" }}>
             <PersonAdd />
           </Avatar>
           <Typography variant="h4">Cadastro de Usuário</Typography>
