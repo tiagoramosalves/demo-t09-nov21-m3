@@ -24,9 +24,21 @@ import { useForm } from "react-hook-form";
 import api from "../../services/api";
 import { toast } from "react-toastify";
 
-const MenuBarLogin = () => {
+const MenuBarLogin = ({ auth, setAuth }) => {
   const history = useHistory();
   const [open, setOpen] = React.useState(false);
+
+  const schema = yup.object().shape({
+    username: yup.string().required("Campo Obrigatório"),
+    password: yup.string().required("Campo Obrigatório"),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    formState: { errors },
+  } = useForm({ resolver: yupResolver(schema) });
 
   const handleClickOpenModal = () => {
     setOpen(true);
@@ -45,22 +57,13 @@ const MenuBarLogin = () => {
     const { access } = response.data;
     console.log(access);
 
+    const { username } = getValues();
+
     localStorage.setItem("@GestaoDeHabitos:token", access);
     toast.success("Login com Sucesso!");
-
-    history.push("/home/Kenzie");
+    setAuth(true);
+    history.push(`/home/${username}`);
   };
-
-  const schema = yup.object().shape({
-    username: yup.string().required("Campo Obrigatório"),
-    password: yup.string().required("Campo Obrigatório"),
-  });
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({ resolver: yupResolver(schema) });
 
   return (
     <>

@@ -12,8 +12,15 @@ import {
 import { Box } from "@mui/system";
 import { Logout } from "@mui/icons-material";
 
-const MenuBar = () => {
+const MenuBar = ({ setAuth }) => {
   const history = useHistory();
+
+  const logout = () => {
+    localStorage.clear();
+    setAuth(false);
+    history.push("/");
+  };
+
   return (
     // <ContairnerMenu>
     // 	<li>
@@ -74,7 +81,7 @@ const MenuBar = () => {
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}></Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <Button variant="text" onClick={() => history.push("/")}>
+            <Button variant="text" onClick={logout}>
               <Logout />
             </Button>
             <Menu
